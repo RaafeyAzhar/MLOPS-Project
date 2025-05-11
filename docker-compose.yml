@@ -1,27 +1,25 @@
-version: '3'
-
 services:
-  sleek-airflow:
-    image: apache/airflow
-
+  airflow:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: sleek-airflow
+    ports:
+      - "8081:8080"
     volumes:
       - ./airflow:/opt/airflow
-
-    ports:
-      - "8080:8080"
-
-    command: airflow standalone
-
-# version: '3'
-
-# services:
-#   sleek-airflow:
-#     build: 
-#       context: . 
-#       dockerfile: Dockerfile
-#     volumes:
-#       - ./airflow:/opt/airflow
-#     ports:
-#       - "8080:8080"
-#     command: airflow standalone
-
+      - C:/Users/raafe/Downloads/Weather-Forecasting-with-MLOps-DVC-Airflow-and-MLFlow/airflow/dags:/opt/airflow/dags
+    environment:
+      AIRFLOW_UID: 50000
+      AIRFLOW__API_AUTH__JWT_SECRET: "3fb20916cddd2d349ccadbd45183d45b"
+    command: >
+      bash -c "
+        if ! id -u airflow > /dev/null 2>&1; then
+          useradd -u ${AIRFLOW_UID} -m airflow;
+        fi &&
+        airflow db migrate &&
+        airflow users create --username Raafey --password 12345678 --firstname Raafey --lastname Azhar --role Admin --email raafey@example.com &&
+        airflow scheduler & 
+        exec airflow api-server
+      "
+    restart: always

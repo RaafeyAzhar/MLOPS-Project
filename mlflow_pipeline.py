@@ -8,7 +8,7 @@ import mlflow.sklearn
 from mlflow.models.signature import infer_signature 
 
 # Set the local storage path
-LOCAL_STORAGE_PATH = r'E:\\FAST_NUCES\\SEMISTER_7_BS(AI)\\MLOPS\\project\\MLOps-Activity7\\MLOps-Activity7'
+LOCAL_STORAGE_PATH = r'C:\Users\raafe\Downloads\Weather-Forecasting-with-MLOps-DVC-Airflow-and-MLFlow'
 
 # Preprocess Data
 def preprocess_data(input_file, output_file):
