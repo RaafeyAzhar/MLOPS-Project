@@ -1,10 +1,14 @@
-FROM apache/airflow:latest
+# Use a different base image, such as Python or any other necessary base
+FROM python:3.9-slim
 
-USER root
-RUN apt-get update && \
-    apt-get -y install git && \
-    apt-get clean
+# Install necessary dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# Now switch to airflow user to install Python packages
-USER airflow
-RUN pip install apache-airflow-providers-fab
+# Install the weather-api dependencies here
+COPY requirements.txt /app/
+WORKDIR /app
+RUN pip install -r requirements.txt
+
+# Add other configurations specific to the weather-api

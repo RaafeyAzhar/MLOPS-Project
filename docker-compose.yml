@@ -18,7 +18,7 @@ services:
           useradd -u ${AIRFLOW_UID} -m airflow;
         fi &&
         airflow db migrate &&
-        airflow users create --username Raafey --password 12345678 --firstname Raafey --lastname Azhar --role Admin --email raafey@example.com &&
+        airflow users create --username "Raafey" --password "12345678" --firstname "Raafey" --lastname "Azhar" --role Admin --email "raafey@example.com" &&
         airflow scheduler & 
         exec airflow api-server
       "

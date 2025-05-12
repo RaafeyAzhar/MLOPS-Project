@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: weather-api
-        image: syedoan/weather-api:latest
+        image: raafeyazhar/weather-api:latest
         ports:
         - containerPort: 8080
 ---

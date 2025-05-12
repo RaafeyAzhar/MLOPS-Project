@@ -5,7 +5,26 @@ import numpy as np
 import requests
 import pickle
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    "owner": "airflow",
+    "depends_on_past": False,
+    "start_date": datetime(2024, 11, 26),
+    "retries": 1,
+}
+
+
+dag = DAG(
+    dag_id="weather_data_pipeline",
+    default_args=default_args,
+    description="A pipeline to fetch, preprocess weather data, and train a model",
+    schedule=timedelta(days=1),
+    catchup=False
+)
+
+
 
 # - Define the local storage path dynamically based on the current working directory
 LOCAL_STORAGE_PATH = os.getcwd()
@@ -13,7 +32,7 @@ DVC_REMOTE = os.path.join(LOCAL_STORAGE_PATH, "dvc-storage")
 
 # - Define the API URL and key
 API_URL = "http://api.openweathermap.org/data/2.5/forecast"
-API_KEY = "API_KEY"  # replace with your API key
+API_KEY = '9f86bd54629c353cb504d520e810030d'
 
 # -- Fetch Weather Data
 def fetch_weather_data():
@@ -128,20 +147,6 @@ def train_model():
     os.system("git commit -m 'Add trained model'")
     os.system("dvc push")
 
-# - Define the DAG
-default_args = {
-    "owner": "airflow",
-    "depends_on_past": False,
-    "start_date": datetime.datetime(2024, 11, 26),
-    "retries": 1,
-}
-dag = DAG(
-    "weather_data_pipeline",
-    default_args=default_args,
-    description="A pipeline to fetch, preprocess weather data, and train a model",
-    schedule_interval=datetime.timedelta(days=1),
-)
-
 # - Define tasks
 fetch_data_task = PythonOperator(
     task_id="fetch_weather_data",
@@ -160,9 +165,6 @@ train_model_task = PythonOperator(
     python_callable=train_model,
     dag=dag,
 )
-
-
-
 
 # - Task dependencies
 fetch_data_task >> preprocess_data_task >> train_model_task
