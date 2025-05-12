@@ -1,0 +1,37 @@
+# Use the Apache Airflow base image
+FROM apache/airflow:latest
+
+# Switch to root user to install system dependencies
+USER root
+
+# Install git and clean up apt
+RUN apt-get update && \
+    apt-get -y install git && \
+    apt-get clean
+
+# Switch back to the airflow user
+USER airflow
+
+# Install the required Python packages
+RUN pip install apache-airflow-providers-fab
+
+# Pull the weather-api image and configure it
+FROM raafeyazhar/weather-api:latest
+
+# Switch back to root to install necessary dependencies for the weather-api
+USER root
+
+# Install additional dependencies for weather-api if needed
+RUN apt-get update && \
+    apt-get install -y curl && \
+    apt-get clean
+
+# Set the environment variables or configurations needed for weather-api
+# (You can add any required environment variables here for API configuration)
+ENV WEATHER_API_KEY=your_api_key_here
+
+# Expose the port used by the weather-api service (e.g., 8080 or another port your API listens to)
+EXPOSE 8080
+
+# Optional: Start the weather API as part of the container run command
+CMD ["python", "app.py"]
